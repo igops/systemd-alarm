@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs alarm service every second
+
+[Timer]
+OnCalendar=*-*-* *:*:*
+AccuracySec=1us
+Persistent=true
+
+[Install]
+WantedBy=timers.target
