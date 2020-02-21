@@ -6,7 +6,7 @@
 
     The following packages will be installed:
 
-        playmidi
+        mpg123
 
 
     The following files will be created:

@@ -24,5 +24,5 @@ echo "$_now TICK; BEEP CONDITION: [$_last_tick < $_alarm_time <= $_now]" >> "$_p
 if [ "$_last_tick" \< "$_alarm_time" ] && ! [ "$_alarm_time" \> "$_now" ]; then
     echo "$_now BEEP START" >> "$_path_log"/alarm-tick.log
     echo "$_now BEEP!" >> "$_path_log"/alarm.log
-    playmidi ./sounds/sound-1.mid
+    mpg123 ./sounds/sound-2.mp3
 fi

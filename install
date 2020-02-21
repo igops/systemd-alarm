@@ -9,7 +9,7 @@ if [ "$1" == "-h" ]; then
   echo
   echo "    The following packages will be installed:"
   echo
-  echo "        playmidi"
+  echo "        mpg123"
   echo
   echo
   echo "    The following files will be created:"
@@ -29,7 +29,7 @@ if [ "$1" == "-h" ]; then
 fi
 
 echo "Installing packages"
-apt-get install playmidi
+apt-get install mpg123
 
 echo "Copying files"
 mkdir -p "$_path_service"
