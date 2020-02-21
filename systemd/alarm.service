@@ -1,0 +1,9 @@
+[Unit]
+Description=Alarm service, designed to be called each second and check should it make the alarm sound
+
+[Service]
+ExecStart=/usr/local/lib/alarm/alarm-tick.sh
+User=root
+
+[Install]
+WantedBy=multi-user.target

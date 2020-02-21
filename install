@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+_path_service="/etc/systemd/system"
+_path_lib="/usr/local/lib/alarm"
+_path_conf="/etc/alarm"
+_path_log="/var/log/alarm"
+
+if [ "$1" == "-h" ]; then
+  echo
+  echo "    The following packages will be installed:"
+  echo
+  echo "        playmidi"
+  echo
+  echo
+  echo "    The following files will be created:"
+  echo
+  echo "        $_path_service/alarm.service"
+  echo "        $_path_service/alarm.timer"
+  echo
+  echo "        $_path_conf/alarm.conf"
+  echo
+  echo "        $_path_lib/alarm-tick.sh"
+  echo "        $_path_lib/alarm-tick.dat"
+  echo "        $_path_lib/sounds/*.mid"
+  echo
+  echo "        $_path_log/alarm.log"
+  echo "        $_path_log/alarm-tick.log"
+  exit 0
+fi
+
+echo "Installing packages"
+apt-get install playmidi
+
+echo "Copying files"
+mkdir -p "$_path_service"
+mkdir -p "$_path_lib"
+mkdir -p "$_path_conf"
+mkdir -p "$_path_log"
+
+cp -a ./lib/. "$_path_lib"/
+cp ./systemd/alarm.service "$_path_service"/alarm.service
+cp ./systemd/alarm.timer "$_path_service"/alarm.timer
+
+chmod u+x "$_path_lib"/alarm
+chmod u+x "$_path_lib"/alarm-tick.sh
+
+echo "10:00" > "$_path_conf"/alarm.conf
+chown "$USER":"$USER" "$_path_conf"/alarm.conf
+
+touch "$_path_log"/alarm.log
+
+"$_path_lib"/alarm -on
+
+exit 0

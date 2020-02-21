@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+_path_lib="/usr/local/lib/alarm"
+_path_conf="/etc/alarm"
+_path_log="/var/log/alarm"
+
+if [ "$1" == "-h" ]; then
+  echo
+  echo "1. Setting up alarm:"
+  echo
+  echo "    ./$(basename "$0") -set HH:MM, e.g.: "
+  echo "    ./$(basename "$0") -set 12:25  # sets the alarm to 12:25 for every weekday"
+  echo
+  echo "    Or configure the alarm time manually in $_path_conf; no service restart required"
+  echo
+  echo
+  echo "2. Getting the alarm time:"
+  echo
+  echo "    ./$(basename "$0") -get"
+  echo
+  echo
+  echo "3. Switching on alarm:"
+  echo
+  echo "    ./$(basename "$0") -on"
+  echo
+  echo
+  echo "3. Switching off alarm:"
+  echo
+  echo "    ./$(basename "$0") -off"
+  echo
+  exit 0
+fi
+
+if [ "$1" == "-set" ]; then
+  echo "$2" > "$_path_conf"/alarm.conf
+  echo "$(date +%H:%M:%S) SET $2" >> "$_path_log"/alarm.log
+  exit 0
+fi
+
+if [ "$1" == "-get" ]; then
+  cat "$_path_conf"/alarm.conf
+  echo "$(date +%H:%M:%S) GET" >> "$_path_log"/alarm.log
+  exit 0
+fi
+
+if [ "$1" == "-on" ]; then
+
+  touch "$_path_lib"/alarm-tick.dat
+  touch "$_path_log"/alarm-tick.log
+  echo "$(date +%H:%M:%S) INIT" >> "$_path_log"/alarm.log
+  echo "$(date +%H:%M:%S)" > "$_path_lib"/alarm-tick.dat
+
+  echo "Starting systemctl timer"
+  # @see https://wiki.archlinux.org/index.php/Systemd/Timers
+  # @see https://askubuntu.com/a/1083647
+
+  # reload cache
+  systemctl daemon-reload
+  # start on booting
+  systemctl enable alarm.timer
+  # start now too
+  systemctl start alarm.timer
+  # get status
+  systemctl status alarm.timer
+
+  echo "$(date +%H:%M:%S) ON" >> "$_path_log"/alarm.log
+  exit 0
+fi
+
+if [ "$1" == "-off" ]; then
+  echo "Stopping systemctl timer"
+
+  # disble on booting
+  systemctl disable alarm.timer
+  # disalbe now too
+  systemctl stop alarm.timer
+  echo "$(date +%H:%M:%S) OFF" >> "$_path_log"/alarm.log
+  exit 0
+fi
